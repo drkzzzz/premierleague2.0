@@ -1,0 +1,17 @@
+package com.premier.league.premier_backend.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UsuarioDTO {
+    private Long idUsuario;
+    private Long idRol;
+    private String nombreUsuario;
+    private String email;
+    private LocalDateTime fechaRegistro;
+}
