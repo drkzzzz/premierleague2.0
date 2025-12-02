@@ -1,10 +1,6 @@
 -- src/main/resources/sql/premier_db.sql
 -- Script de Creación de Tablas (Esquema)
 
--- Asegura que la BD exista y la usa. Si la usas en XAMPP, puedes crearla manualmente una vez.
--- CREATE DATABASE IF NOT EXISTS `premier_league_db`;
--- USE `premier_league_db`;
-
 -- 1. Tabla de Roles
 CREATE TABLE `roles` (
     `id_rol` BIGINT NOT NULL AUTO_INCREMENT,
