@@ -10,4 +10,26 @@ import lombok.NoArgsConstructor;
 public class PermisoDTO {
     private Long idPermiso;
     private String nombre;
+
+    // Constructor explícito
+    public PermisoDTO(Long idPermiso, String nombre) {
+        this.idPermiso = idPermiso;
+        this.nombre = nombre;
+    }
+
+    public Long getIdPermiso() {
+        return this.idPermiso;
+    }
+
+    public void setIdPermiso(Long idPermiso) {
+        this.idPermiso = idPermiso;
+    }
+
+    public String getNombre() {
+        return this.nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 }

@@ -2,6 +2,7 @@ package com.premier.league.premier_backend.service;
 
 import com.premier.league.premier_backend.dto.UsuarioDTO;
 import com.premier.league.premier_backend.dto.RegistroDTO;
+import com.premier.league.premier_backend.dto.RolDTO;
 import com.premier.league.premier_backend.exception.UsuarioNotFoundException;
 import com.premier.league.premier_backend.exception.UsuarioYaExisteException;
 import com.premier.league.premier_backend.exception.RolNotFoundException;
@@ -78,6 +79,22 @@ public class UsuarioService {
                 .collect(Collectors.toList());
     }
 
+    public List<UsuarioDTO> obtenerTodosLosUsuarios() {
+        return obtenerTodos();
+    }
+
+    public UsuarioDTO obtenerUsuarioPorId(Long idUsuario) {
+        return obtenerPorId(idUsuario);
+    }
+
+    public UsuarioDTO bloquearUsuario(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UsuarioNotFoundException("Usuario no encontrado con ID: " + idUsuario));
+        // Aquí iría la lógica de bloqueo si existe un campo 'activo' o 'bloqueado'
+        // Por ahora, solo retornamos el usuario
+        return convertirADTO(usuario);
+    }
+
     public UsuarioDTO actualizarUsuario(Long idUsuario, UsuarioDTO usuarioDTO) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioNotFoundException("Usuario no encontrado con ID: " + idUsuario));
@@ -113,6 +130,38 @@ public class UsuarioService {
         usuarioRepository.deleteById(idUsuario);
     }
 
+    public UsuarioDTO crearUsuario(UsuarioDTO usuarioDTO) {
+        // Validar que no exista usuario con el mismo nombre o email
+        if (usuarioRepository.existsByNombreUsuario(usuarioDTO.getNombreUsuario())) {
+            throw new UsuarioYaExisteException("El nombre de usuario ya existe");
+        }
+
+        if (usuarioRepository.existsByEmail(usuarioDTO.getEmail())) {
+            throw new UsuarioYaExisteException("El email ya existe");
+        }
+
+        // Obtener rol (por defecto ROLE_USER si no se proporciona)
+        Rol rol;
+        if (usuarioDTO.getIdRol() != null) {
+            rol = rolRepository.findById(usuarioDTO.getIdRol())
+                    .orElseThrow(() -> new RolNotFoundException("Rol no encontrado"));
+        } else {
+            rol = rolRepository.findByNombre("ROLE_USER")
+                    .orElseThrow(() -> new RolNotFoundException("Rol USER no encontrado"));
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.setNombreUsuario(usuarioDTO.getNombreUsuario());
+        usuario.setEmail(usuarioDTO.getEmail());
+        // Usar una contraseña por defecto o generada
+        usuario.setPasswordHash(passwordEncoder.encode("password123"));
+        usuario.setRol(rol);
+        usuario.setFechaRegistro(LocalDateTime.now());
+
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+        return convertirADTO(usuarioGuardado);
+    }
+
     public Usuario obtenerUsuarioEntity(Long idUsuario) {
         return usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioNotFoundException("Usuario no encontrado con ID: " + idUsuario));
@@ -124,11 +173,16 @@ public class UsuarioService {
     }
 
     private UsuarioDTO convertirADTO(Usuario usuario) {
+        RolDTO rolDTO = null;
+        if (usuario.getRol() != null) {
+            rolDTO = new RolDTO(usuario.getRol().getIdRol(), usuario.getRol().getNombre());
+        }
         return new UsuarioDTO(
                 usuario.getIdUsuario(),
                 usuario.getRol() != null ? usuario.getRol().getIdRol() : null,
                 usuario.getNombreUsuario(),
                 usuario.getEmail(),
-                usuario.getFechaRegistro());
+                usuario.getFechaRegistro(),
+                rolDTO);
     }
 }

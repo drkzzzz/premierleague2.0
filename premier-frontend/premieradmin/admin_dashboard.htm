@@ -27,13 +27,168 @@
             border-radius: 0.5rem;
             cursor: pointer;
             margin: 0 0.5rem;
-            font-size: 1.4rem;
+            font-size: 0.9rem;
+            font-weight: bold;
         }
-        .btn-bloquear { background-color: #ff4081; color: white; }
+        .btn-agregar { background-color: #00c896; color: white; }
+        .btn-editar { background-color: #ff9800; color: white; }
         .btn-eliminar { background-color: #f44336; color: white; }
-        .btn-bloquear:hover, .btn-eliminar:hover { opacity: 0.8; }
+        .btn-guardar { background-color: #4caf50; color: white; }
+        .btn-cancelar { background-color: #757575; color: white; }
+        .btn-accion:hover { opacity: 0.8; }
         .tabla-admin th, .tabla-admin td {
             color: var(--color-primario);
+            padding: 1rem 0.5rem;
+        }
+        .tabla-admin th {
+            background-color: #1a0033;
+            color: white;
+        }
+        .tabla-admin tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+        
+        /* Estilos del formulario */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--color-primario);
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00c896;
+            box-shadow: 0 0 5px rgba(0, 200, 150, 0.3);
+        }
+        
+        /* Modal/Form container */
+        .form-container {
+            display: none;
+            background: #f9f9f9;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            border-left: 5px solid #00c896;
+        }
+        .form-container.show {
+            display: block;
+        }
+        
+        /* Barra de búsqueda */
+        .search-bar {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+        .search-bar input {
+            flex: 1;
+            padding: 0.7rem;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+        }
+        .search-bar button {
+            padding: 0.7rem 1.5rem;
+            background-color: #00c896;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .search-bar button:hover {
+            opacity: 0.8;
+        }
+        
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            display: none;
+        }
+        .alert.show {
+            display: block;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Estilos para modales */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--color-primario);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #00c896;
+            padding-bottom: 1rem;
+        }
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+        .modal-footer button {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -54,8 +209,19 @@
     <main class="seccion-principal">
         <section class="contenedor seccion">
             <h2 class="titulo-seccion">Panel de Administración</h2>
+            
+            <!-- Mensajes de alerta -->
+            <div id="alert-message" class="alert"></div>
+            
             <div class="admin-section">
                 <h3>Gestión de Usuarios</h3>
+                
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Buscar por nombre de usuario o email..." onkeyup="buscarUsuarios()">
+                    <button class="btn-accion btn-agregar" onclick="mostrarFormularioAgregar()">+ Agregar Usuario</button>
+                </div>
+                
+                <!-- Tabla de usuarios -->
                 <div class="tabla-contenedor">
                     <table class="tabla-admin">
                         <thead>
@@ -69,18 +235,64 @@
                             </tr>
                         </thead>
                         <tbody id="usuarios-table-body">
-                            <tr><td colspan="6">Cargando usuarios...</td></tr>
+                            <tr><td colspan="6" style="text-align: center; padding: 2rem;">Cargando usuarios...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            
-            <div class="admin-section">
-                <h3>Gestión de Comentarios (Próximamente)</h3>
-                <p>Aquí se mostrarán los comentarios con opciones para eliminarlos.</p>
-            </div>
         </section>
     </main>
+
+    <!-- Modal para crear/editar usuario -->
+    <div id="usuario-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header" id="modal-title">Agregar Usuario</div>
+            <div class="modal-body">
+                <form id="usuario-form" onsubmit="guardarUsuario(event)">
+                    <input type="hidden" id="usuario-id">
+                    
+                    <div class="form-group">
+                        <label for="usuario-nombre">Nombre de Usuario:</label>
+                        <input type="text" id="usuario-nombre" required>
+                        <small style="color: #999;" id="usuario-nombre-hint"></small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="usuario-email">Email:</label>
+                        <input type="email" id="usuario-email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="usuario-rol">Rol:</label>
+                        <select id="usuario-rol" required>
+                            <option value="">-- Selecciona un rol --</option>
+                            <option value="1">ROLE_USER</option>
+                            <option value="2">ROLE_ADMIN</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-accion btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+                <button type="button" class="btn-accion btn-guardar" onclick="$('#usuario-form').submit()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para confirmar eliminación -->
+    <div id="eliminar-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">Confirmar Eliminación</div>
+            <div class="modal-body">
+                <p style="font-size: 1.1rem; color: #666;">¿Estás seguro de que deseas eliminar este usuario?</p>
+                <p style="font-size: 0.95rem; color: #999;">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-accion btn-cancelar" onclick="cerrarModalEliminar()">Cancelar</button>
+                <button type="button" class="btn-accion btn-eliminar" onclick="confirmarEliminar()">Eliminar</button>
+            </div>
+        </div>
+    </div>
 
     <footer class="pie-de-pagina">
         <p class="copyright">Premier League 2025 &copy;</p>

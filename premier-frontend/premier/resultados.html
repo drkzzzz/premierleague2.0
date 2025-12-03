@@ -4,28 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resultados | Premier League</title>
-    <link rel="icon" href="img/Logos/icono-premier.svg">
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/premier.css">
+    <link rel="icon" href="../img/Logos/icono-premier.svg">
+    <link rel="stylesheet" href="../css/normalize.css">
+    <link rel="stylesheet" href="../css/premier.css">
 </head>
 <body>
     <header class="encabezado-sitio">
         <div class="contenedor-principal contenido-header">
             <div class="barra">
                 <a href="paginaprincipal.html">
-                    <img src="img/Logos/icono3.png" alt="Logotipo Premier League">
+                    <img src="../img/Logos/icono3.png" alt="Logotipo Premier League">
                 </a>
                 <div class="mobile-menu">
                     <a href="#navegacion-principal">
-                        <img src="img/Logos/barras.svg" alt="Icono Menu" class="logo-invertido">
+                        <img src="../img/Logos/barras.svg" alt="Icono Menu" class="logo-invertido">
                     </a>
                 </div>
                 <nav class="navegacion-principal">
-                      <a href="premier/paginaprincipal.html">Inicio</a>
-                      <a href="premier/jornadas.html">Jornadas</a>
-                      <a href="premier/tabla.html">Tabla de Posiciones</a>
-                      <a href="premier/estadisticas.html">Estadisticas</a>
-                      <a href="premier/resultados.html">Resultados</a>
+                      <a href="paginaprincipal.html">Inicio</a>
+                      <a href="jornadas.html">Jornadas</a>
+                      <a href="tabla.html">Tabla de Posiciones</a>
+                      <a href="estadisticas.html">Estadisticas</a>
+                      <a href="resultados.html">Resultados</a>
                 </nav>
             </div>
         </div>
@@ -34,6 +34,15 @@
     <main class="seccion-principal">
         <section class="contenedor seccion">
             <h2 class="titulo-seccion">Resultados de la Jornada 7</h2>
+            
+            <div style="text-align: center; margin: 2rem 0;">
+                <div style="display: inline-block; background: linear-gradient(135deg, #1a0033, #2d0052); padding: 1.5rem 2.5rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 200, 150, 0.3); border: 2px solid #00c896;">
+                    <label for="selector-jornadas-resultados" style="color: #00ff99; font-size: 1.1rem; margin-right: 1rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">📅 Selecciona Jornada:</label>
+                    <select id="selector-jornadas-resultados" style="padding: 0.7rem 1.5rem; font-size: 1rem; border-radius: 8px; border: 2px solid #00c896; background: #1a0033; color: #00ff99; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px rgba(0, 200, 150, 0.2); transition: all 0.3s ease;">
+                        <option value="">-- Cargando jornadas --</option>
+                    </select>
+                </div>
+            </div>
             
             <div id="contenedor-partidos">
             </div>
@@ -46,23 +55,23 @@
                 <h3>Síguenos en Redes Sociales</h3>
                 <div class="iconos-redes">
                     <a href="https://www.facebook.com/premierleague">
-                        <img src="img/redes/facebook.png" alt="Logo de Facebook" class="iconos-redes-sociales">
+                        <img src="../img/redes/facebook.png" alt="Logo de Facebook" class="iconos-redes-sociales">
                     </a>
                     <a href="https://twitter.com/premierleague">
-                        <img src="img/redes/x.png" alt="Logo de Twitter" class="iconos-redes-sociales">
+                        <img src="../img/redes/x.png" alt="Logo de Twitter" class="iconos-redes-sociales">
                     </a>
                     <a href="https://www.instagram.com/premierleague">
-                        <img src="img/redes/instagram.png" alt="Logo de Instagram" class="iconos-redes-sociales">
+                        <img src="../img/redes/instagram.png" alt="Logo de Instagram" class="iconos-redes-sociales">
                     </a>
                     <a href="https://www.youtube.com/premierleague">
-                        <img src="img/redes/youtube.png" alt="Logo de YouTube" class="iconos-redes-sociales">
+                        <img src="../img/redes/youtube.png" alt="Logo de YouTube" class="iconos-redes-sociales">
                     </a>
                 </div>
             </div>
             <p class="copyright">Todos los derechos reservados Premier League 2025 &copy;</p>
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-        <script src="js/scripts.js"></script>
+        <script src="../js/scripts.js"></script>
     </footer>
 </body>
 </html>

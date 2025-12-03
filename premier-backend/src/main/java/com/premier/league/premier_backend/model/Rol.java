@@ -14,20 +14,40 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Rol {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_rol")
     private Long idRol;
-    
+
     @Column(nullable = false, unique = true, length = 50)
     private String nombre;
-    
+
     @ManyToMany
-    @JoinTable(
-        name = "rol_permiso",
-        joinColumns = @JoinColumn(name = "id_rol"),
-        inverseJoinColumns = @JoinColumn(name = "id_permiso")
-    )
+    @JoinTable(name = "rol_permiso", joinColumns = @JoinColumn(name = "id_rol"), inverseJoinColumns = @JoinColumn(name = "id_permiso"))
     private Set<Permiso> permisos = new HashSet<>();
+
+    public Long getIdRol() {
+        return this.idRol;
+    }
+
+    public void setIdRol(Long idRol) {
+        this.idRol = idRol;
+    }
+
+    public String getNombre() {
+        return this.nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Set<Permiso> getPermisos() {
+        return this.permisos;
+    }
+
+    public void setPermisos(Set<Permiso> permisos) {
+        this.permisos = permisos;
+    }
 }

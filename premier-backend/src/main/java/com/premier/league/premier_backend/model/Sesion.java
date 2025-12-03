@@ -30,4 +30,44 @@ public class Sesion {
 
     @Column(length = 45)
     private String ipAcceso;
+
+    public Long getIdSesion() {
+        return this.idSesion;
+    }
+
+    public void setIdSesion(Long idSesion) {
+        this.idSesion = idSesion;
+    }
+
+    public Usuario getUsuario() {
+        return this.usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getTokenRefresh() {
+        return this.tokenRefresh;
+    }
+
+    public void setTokenRefresh(String tokenRefresh) {
+        this.tokenRefresh = tokenRefresh;
+    }
+
+    public LocalDateTime getFechaExpiracion() {
+        return this.fechaExpiracion;
+    }
+
+    public void setFechaExpiracion(LocalDateTime fechaExpiracion) {
+        this.fechaExpiracion = fechaExpiracion;
+    }
+
+    public String getIpAcceso() {
+        return this.ipAcceso;
+    }
+
+    public void setIpAcceso(String ipAcceso) {
+        this.ipAcceso = ipAcceso;
+    }
 }
