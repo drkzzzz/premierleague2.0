@@ -45,4 +45,52 @@ public class Comentario {
     public enum TipoEntidad {
         PARTIDO, NOTICIA, EQUIPO
     }
+
+    public Long getIdComentario() {
+        return this.idComentario;
+    }
+
+    public void setIdComentario(Long idComentario) {
+        this.idComentario = idComentario;
+    }
+
+    public Usuario getUsuario() {
+        return this.usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getContenido() {
+        return this.contenido;
+    }
+
+    public void setContenido(String contenido) {
+        this.contenido = contenido;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return this.fechaCreacion;
+    }
+
+    public void setFechaCreacion(LocalDateTime fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public String getEntidadId() {
+        return this.entidadId;
+    }
+
+    public void setEntidadId(String entidadId) {
+        this.entidadId = entidadId;
+    }
+
+    public TipoEntidad getEntidadTipo() {
+        return this.entidadTipo;
+    }
+
+    public void setEntidadTipo(TipoEntidad entidadTipo) {
+        this.entidadTipo = entidadTipo;
+    }
 }

@@ -36,4 +36,36 @@ public class FavoritoEquipo {
             fechaAdicion = LocalDateTime.now();
         }
     }
+
+    public Long getIdFavorito() {
+        return this.idFavorito;
+    }
+
+    public void setIdFavorito(Long idFavorito) {
+        this.idFavorito = idFavorito;
+    }
+
+    public Usuario getUsuario() {
+        return this.usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getIdEquipoApi() {
+        return this.idEquipoApi;
+    }
+
+    public void setIdEquipoApi(String idEquipoApi) {
+        this.idEquipoApi = idEquipoApi;
+    }
+
+    public LocalDateTime getFechaAdicion() {
+        return this.fechaAdicion;
+    }
+
+    public void setFechaAdicion(LocalDateTime fechaAdicion) {
+        this.fechaAdicion = fechaAdicion;
+    }
 }

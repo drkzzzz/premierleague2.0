@@ -8,6 +8,8 @@ import com.premier.league.premier_backend.repository.SesionRepository;
 import com.premier.league.premier_backend.security.JwtTokenProvider;
 import com.premier.league.premier_backend.service.UsuarioService;
 import com.premier.league.premier_backend.model.Sesion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = { "http://localhost:3000", "http://localhost:5173", "*" })
 public class AuthController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private UsuarioService usuarioService;
@@ -77,9 +81,19 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginDTO loginDTO) {
         try {
-            Usuario usuario = usuarioService.obtenerUsuarioEntityPorNombre(loginDTO.getNombreUsuario());
+            logger.info("=== INICIO LOGIN ===");
+            logger.info("Usuario recibido: {}", loginDTO.getNombreUsuario());
 
-            if (!passwordEncoder.matches(loginDTO.getPassword(), usuario.getPasswordHash())) {
+            Usuario usuario = usuarioService.obtenerUsuarioEntityPorNombre(loginDTO.getNombreUsuario());
+            logger.info("Usuario encontrado en BD: {}", usuario.getNombreUsuario());
+            logger.info("Password recibida: {}", loginDTO.getPassword());
+            logger.info("Hash almacenado: {}", usuario.getPasswordHash());
+
+            boolean passwordMatch = passwordEncoder.matches(loginDTO.getPassword(), usuario.getPasswordHash());
+            logger.info("¿Password coincide? {}", passwordMatch);
+
+            if (!passwordMatch) {
+                logger.warn("Password NO coincide para usuario: {}", usuario.getNombreUsuario());
                 throw new ContrasenaInvalidaException("Contraseña incorrecta");
             }
 

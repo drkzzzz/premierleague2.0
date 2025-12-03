@@ -2,6 +2,8 @@ package com.premier.league.premier_backend.config;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -12,6 +14,9 @@ import java.util.List;
 
 @Component
 public class DatabaseInitializer implements CommandLineRunner {
+
+    @Autowired(required = false)
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
@@ -54,6 +59,10 @@ public class DatabaseInitializer implements CommandLineRunner {
             List<String> seedsSQLs = parseSQL(seedsSQL);
             System.out.println("   Encontrados " + seedsSQLs.size() + " statements");
             executeSQLStatements(stmt, seedsSQLs, "datos");
+
+            // Actualizar contraseñas con BCrypt válido
+            System.out.println("🔐 Actualizando hashes de contraseñas...");
+            updatePasswordHashes(stmt);
 
             conn.commit();
             stmt.close();
@@ -140,5 +149,30 @@ public class DatabaseInitializer implements CommandLineRunner {
             }
         }
         System.out.println("✅ " + tipo + " completados (" + count + " OK, " + errors + " errores)");
+    }
+
+    private void updatePasswordHashes(Statement stmt) {
+        try {
+            // Hash BCrypt válido para la contraseña "password"
+            String validHash = "$2a$12$nGs.OKzuFwjaXL4LznU/SOzIT/dWarvaeKr2qqzpt8ZatBIHAFM7i";
+
+            // Actualizar admin_premier
+            String updateAdmin = "UPDATE usuarios SET password_hash = '" + validHash
+                    + "' WHERE nombre_usuario = 'admin_premier'";
+            int rowsAffected1 = stmt.executeUpdate(updateAdmin);
+            System.out.println("  ✓ Hash actualizado para admin_premier (" + rowsAffected1 + " fila(s))");
+
+            // Actualizar holahola
+            String updateHolahola = "UPDATE usuarios SET password_hash = '" + validHash
+                    + "' WHERE nombre_usuario = 'holahola'";
+            int rowsAffected2 = stmt.executeUpdate(updateHolahola);
+            System.out.println("  ✓ Hash actualizado para holahola (" + rowsAffected2 + " fila(s))");
+
+            System.out.println("✅ Contraseñas actualizadas correctamente (" + (rowsAffected1 + rowsAffected2)
+                    + " usuario(s) actualizado(s))");
+        } catch (Exception e) {
+            System.out.println("⚠️ Error actualizando hashes: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

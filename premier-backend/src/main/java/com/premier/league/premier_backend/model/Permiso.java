@@ -19,4 +19,20 @@ public class Permiso {
 
     @Column(nullable = false, unique = true, length = 100)
     private String nombre;
+
+    public Long getIdPermiso() {
+        return this.idPermiso;
+    }
+
+    public void setIdPermiso(Long idPermiso) {
+        this.idPermiso = idPermiso;
+    }
+
+    public String getNombre() {
+        return this.nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 }
