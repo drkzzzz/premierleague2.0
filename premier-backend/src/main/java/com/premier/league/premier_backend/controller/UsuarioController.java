@@ -132,4 +132,49 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
+
+    /**
+     * Obtener perfil del usuario autenticado
+     * GET /api/usuario/perfil
+     */
+    @GetMapping("/perfil/actual")
+    public ResponseEntity<Map<String, Object>> obtenerPerfilActual() {
+        try {
+            // Nota: En Spring Security, se puede obtener el usuario autenticado con:
+            // Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            // Por ahora retornamos error, necesita implementación adicional en
+            // SecurityConfig
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Endpoint requiere autenticación adicional");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * Actualizar perfil del usuario autenticado
+     * PUT /api/usuario/perfil
+     */
+    @PutMapping("/perfil/actualizar")
+    public ResponseEntity<Map<String, Object>> actualizarPerfilActual(@RequestBody UsuarioDTO usuarioDTO) {
+        try {
+            // Nota: Se necesita obtener el ID del usuario autenticado del contexto de
+            // seguridad
+            // Por ahora, retornamos error
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Endpoint requiere autenticación adicional");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 }

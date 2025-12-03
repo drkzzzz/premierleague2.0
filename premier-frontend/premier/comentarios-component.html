@@ -1,0 +1,378 @@
+<!-- COMPONENTE DE COMENTARIOS - Incluir en cualquier página donde desees comentarios -->
+
+<style>
+    .comentarios-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-top: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .comentarios-section h3 {
+        color: var(--color-primario);
+        border-bottom: 2px solid #00c896;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .comentario-form {
+        background-color: #f9f9f9;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--color-primario);
+        font-weight: bold;
+    }
+    
+    .form-group textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #ddd;
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
+        font-family: Arial, sans-serif;
+        resize: vertical;
+        min-height: 100px;
+        box-sizing: border-box;
+    }
+    
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #00c896;
+    }
+    
+    .btn-comentar {
+        width: 100%;
+        padding: 0.8rem;
+        background-color: #00c896;
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .btn-comentar:hover {
+        background-color: #009970;
+    }
+    
+    .btn-comentar:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+    
+    .comentarios-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .comentario-item {
+        background-color: #f5f5f5;
+        padding: 1.5rem;
+        border-left: 4px solid #00c896;
+        border-radius: 0.25rem;
+    }
+    
+    .comentario-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .comentario-usuario {
+        font-weight: bold;
+        color: var(--color-primario);
+        font-size: 0.95rem;
+    }
+    
+    .comentario-fecha {
+        color: #999;
+        font-size: 0.85rem;
+    }
+    
+    .comentario-calificacion {
+        display: flex;
+        gap: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .estrella {
+        color: #ffc107;
+        font-size: 0.9rem;
+    }
+    
+    .comentario-texto {
+        color: #333;
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+    }
+    
+    .comentario-acciones {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+    
+    .btn-eliminar-comentario {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 0.4rem 0.8rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+    
+    .btn-eliminar-comentario:hover {
+        background-color: #d32f2f;
+    }
+    
+    .sin-comentarios {
+        text-align: center;
+        color: #999;
+        padding: 2rem;
+    }
+    
+    .alert-comentario {
+        padding: 0.8rem;
+        margin-bottom: 1rem;
+        border-radius: 0.5rem;
+        display: none;
+    }
+    
+    .alert-comentario.show {
+        display: block;
+    }
+    
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .alert-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+</style>
+
+<section class="comentarios-section" id="comentarios-container" style="display:none;">
+    <h3>Comentarios</h3>
+    
+    <div id="alert-comentario" class="alert-comentario"></div>
+    
+    <!-- Formulario de nuevo comentario (solo si está autenticado) -->
+    <div id="comentario-form-container" class="comentario-form" style="display:none;">
+        <div class="form-group">
+            <label for="comentario-texto">Tu comentario:</label>
+            <textarea id="comentario-texto" placeholder="Comparte tu opinión..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="comentario-calificacion">Calificación (1-5):</label>
+            <select id="comentario-calificacion" style="width: 100%; padding: 0.8rem; border: 2px solid #ddd; border-radius: 0.5rem;">
+                <option value="">-- Selecciona una calificación --</option>
+                <option value="1">⭐ 1 - Muy Malo</option>
+                <option value="2">⭐⭐ 2 - Malo</option>
+                <option value="3">⭐⭐⭐ 3 - Regular</option>
+                <option value="4">⭐⭐⭐⭐ 4 - Bueno</option>
+                <option value="5">⭐⭐⭐⭐⭐ 5 - Excelente</option>
+            </select>
+        </div>
+        
+        <button class="btn-comentar" onclick="enviarComentario()">Enviar Comentario</button>
+    </div>
+    
+    <!-- Lista de comentarios -->
+    <div class="comentarios-list" id="comentarios-list">
+        <p class="sin-comentarios">Cargando comentarios...</p>
+    </div>
+</section>
+
+<script>
+// Variables globales para comentarios
+let comentariosActual = {
+    entidadId: null,
+    entidadTipo: null // 'equipo', 'jugador', 'jornada', etc.
+};
+
+function inicializarComentarios(entidadId, entidadTipo) {
+    comentariosActual.entidadId = entidadId;
+    comentariosActual.entidadTipo = entidadTipo;
+    
+    // Mostrar contenedor
+    $('#comentarios-container').show();
+    
+    // Mostrar formulario solo si está autenticado
+    const token = getJwtToken();
+    if (token) {
+        $('#comentario-form-container').show();
+    }
+    
+    // Cargar comentarios
+    cargarComentarios(entidadId, entidadTipo);
+}
+
+function cargarComentarios(entidadId, entidadTipo) {
+    $.ajax({
+        url: `${BASE_API_URL}/comentarios/entidad/${entidadId}/${entidadTipo}`,
+        method: 'GET',
+        success: function(response) {
+            console.log('Comentarios cargados:', response);
+            
+            let comentarios = response.data || response || [];
+            if (Array.isArray(comentarios) && comentarios.length > 0) {
+                renderizarComentarios(comentarios);
+            } else {
+                $('#comentarios-list').html('<p class="sin-comentarios">No hay comentarios aún. ¡Sé el primero!</p>');
+            }
+        },
+        error: function(xhr) {
+            console.error('Error al cargar comentarios:', xhr);
+            $('#comentarios-list').html('<p class="sin-comentarios" style="color:red;">Error al cargar comentarios</p>');
+        }
+    });
+}
+
+function renderizarComentarios(comentarios) {
+    const token = getJwtToken();
+    const usuarioJSON = localStorage.getItem('usuario');
+    const usuarioActual = usuarioJSON ? JSON.parse(usuarioJSON) : null;
+    
+    let html = '';
+    
+    comentarios.forEach(comentario => {
+        const fecha = new Date(comentario.fechaComentario).toLocaleDateString('es-ES');
+        const estrellas = '⭐'.repeat(comentario.calificacion || 0);
+        const esOwner = usuarioActual && usuarioActual.idUsuario === comentario.usuario.idUsuario;
+        
+        let btnEliminar = '';
+        if (token && (esOwner || usuarioActual?.rol?.nombre === 'ROLE_ADMIN')) {
+            btnEliminar = `<button class="btn-eliminar-comentario" onclick="eliminarComentario(${comentario.idComentario})">Eliminar</button>`;
+        }
+        
+        html += `
+            <div class="comentario-item">
+                <div class="comentario-header">
+                    <div>
+                        <span class="comentario-usuario">${comentario.usuario.nombreUsuario}</span>
+                        <span class="comentario-fecha">${fecha}</span>
+                    </div>
+                    ${btnEliminar}
+                </div>
+                <div class="comentario-calificacion">
+                    ${estrellas}
+                </div>
+                <div class="comentario-texto">
+                    ${comentario.texto}
+                </div>
+            </div>
+        `;
+    });
+    
+    $('#comentarios-list').html(html);
+}
+
+function enviarComentario() {
+    const token = getJwtToken();
+    const usuario = localStorage.getItem('usuario');
+    
+    if (!token || !usuario) {
+        mostrarAlertaComentario('Debes iniciar sesión para comentar', 'error');
+        return;
+    }
+    
+    const texto = $('#comentario-texto').val();
+    const calificacion = parseInt($('#comentario-calificacion').val()) || 0;
+    
+    if (!texto.trim()) {
+        mostrarAlertaComentario('El comentario no puede estar vacío', 'error');
+        return;
+    }
+    
+    const usuarioObj = JSON.parse(usuario);
+    
+    const comentarioData = {
+        texto: texto,
+        calificacion: calificacion,
+        entidadId: comentariosActual.entidadId,
+        entidadTipo: comentariosActual.entidadTipo,
+        idUsuario: usuarioObj.idUsuario || usuarioObj.id
+    };
+    
+    $.ajax({
+        url: `${BASE_API_URL}/comentarios`,
+        method: 'POST',
+        contentType: 'application/json',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        data: JSON.stringify(comentarioData),
+        success: function(response) {
+            console.log('Comentario creado:', response);
+            mostrarAlertaComentario('¡Comentario enviado exitosamente!', 'success');
+            $('#comentario-texto').val('');
+            $('#comentario-calificacion').val('');
+            cargarComentarios(comentariosActual.entidadId, comentariosActual.entidadTipo);
+        },
+        error: function(xhr) {
+            console.error('Error al crear comentario:', xhr);
+            const errorMsg = xhr.responseJSON?.message || 'Error al enviar el comentario';
+            mostrarAlertaComentario(errorMsg, 'error');
+        }
+    });
+}
+
+function eliminarComentario(idComentario) {
+    if (!confirm('¿Estás seguro de que deseas eliminar este comentario?')) {
+        return;
+    }
+    
+    const token = getJwtToken();
+    
+    $.ajax({
+        url: `${BASE_API_URL}/comentarios/${idComentario}`,
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        success: function(response) {
+            console.log('Comentario eliminado:', response);
+            mostrarAlertaComentario('Comentario eliminado exitosamente', 'success');
+            cargarComentarios(comentariosActual.entidadId, comentariosActual.entidadTipo);
+        },
+        error: function(xhr) {
+            console.error('Error al eliminar comentario:', xhr);
+            mostrarAlertaComentario('Error al eliminar el comentario', 'error');
+        }
+    });
+}
+
+function mostrarAlertaComentario(message, type) {
+    const $alert = $('#alert-comentario');
+    $alert.removeClass('show alert-success alert-error');
+    $alert.addClass(`show alert-${type}`);
+    $alert.text(message);
+    
+    if (type === 'error') {
+        setTimeout(() => {
+            $alert.removeClass('show');
+        }, 5000);
+    }
+}
+</script>

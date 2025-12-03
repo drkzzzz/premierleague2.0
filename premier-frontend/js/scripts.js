@@ -82,6 +82,7 @@ function handleLogout() {
             localStorage.removeItem('idUsuario');
             localStorage.removeItem('nombreUsuario');
             localStorage.removeItem('email');
+            localStorage.removeItem('usuario');
             
             alert('Sesión cerrada.');
             // Redirigir al login del admin
@@ -89,6 +90,50 @@ function handleLogout() {
         }
     });
 }
+
+// Alias para cerrarSesion (usado en el frontend)
+function cerrarSesion() {
+    return handleLogout();
+}
+
+// Función para actualizar el header después de login
+function actualizarHeaderAuth() {
+    const token = getJwtToken();
+    const usuario = localStorage.getItem('usuario');
+    const authLink = $('#auth-link');
+    
+    if (token && usuario) {
+        // Usuario autenticado
+        try {
+            const usuarioObj = JSON.parse(usuario);
+            authLink.text('👤 ' + (usuarioObj.nombreUsuario || 'Mi Perfil'));
+            authLink.attr('href', 'perfil.html');
+            authLink.off('click');
+        } catch (e) {
+            // Si hay error al parsear, limpiar storage
+            localStorage.removeItem('token');
+            localStorage.removeItem('usuario');
+            authLink.text('Iniciar Sesión');
+            authLink.attr('href', 'login.html');
+        }
+    } else {
+        // Sin autenticar
+        authLink.text('Iniciar Sesión');
+        authLink.attr('href', 'login.html');
+    }
+}
+
+// Escuchar cambios en localStorage para actualizar el header dinámicamente
+window.addEventListener('storage', function(e) {
+    if (e.key === 'token' || e.key === 'usuario') {
+        actualizarHeaderAuth();
+    }
+});
+
+// También actualizar cuando se carga la página
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarHeaderAuth();
+});
 
 // --- FUNCIONES DEL PANEL ADMIN ---
 
@@ -758,6 +803,9 @@ function popularSelectorJornadas() {
 // ===============================================
 
 $(document).ready(function() {
+    // --- Actualizar header de autenticación en todas las páginas ---
+    actualizarHeaderAuth();
+    
     // --- Inicialización de Lógica de Admin/Auth ---
     const currentPath = window.location.pathname;
 
@@ -876,4 +924,7 @@ $(document).ready(function() {
             }
         );
     });
+    
+    // Inicializar el header de autenticación cuando carga la página
+    actualizarHeaderAuth();
 });
