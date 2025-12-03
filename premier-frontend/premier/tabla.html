@@ -26,6 +26,13 @@
                        <a href="tabla.html">Tabla de Posiciones</a>
                        <a href="estadisticas.html">Estadisticas</a>
                        <a href="resultados.html">Resultados</a>
+                       <div class="auth-container" style="position: relative; display: inline-block;">
+                           <a id="auth-link" href="login.html" style="color: #00c896; font-weight: bold; cursor: pointer;">Iniciar Sesión</a>
+                           <div id="auth-menu" class="auth-menu" style="display: none; position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ddd; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000; min-width: 150px;">
+                               <a href="perfil.html" style="display: block; padding: 0.8rem 1rem; color: var(--color-primario); text-decoration: none; border-bottom: 1px solid #eee;" onclick="event.stopPropagation();">👤 Mi Perfil</a>
+                               <a href="#" onclick="cerrarSesion(); return false;" style="display: block; padding: 0.8rem 1rem; color: #f44336; text-decoration: none;">🚪 Cerrar Sesión</a>
+                           </div>
+                       </div>
                 </nav>
             </div>
         </div>
@@ -80,6 +87,22 @@
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="../js/scripts.js"></script>
+        <script>
+            $(document).ready(function() {
+                actualizarHeaderAuth();
+                $('#auth-link').on('click', function(e) {
+                    const token = getJwtToken();
+                    if (token) {
+                        e.preventDefault();
+                        $('#auth-menu').toggle();
+                        e.stopPropagation();
+                    }
+                });
+                $(document).on('click', function() {
+                    $('#auth-menu').hide();
+                });
+            });
+        </script>
     </footer>
 </body>
 </html>

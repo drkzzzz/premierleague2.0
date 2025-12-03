@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil | Premier League</title>
+    <link rel="icon" href="../img/Logos/logo-premier.svg">
+    <link rel="stylesheet" href="../css/normalize.css">
+    <link rel="stylesheet" href="../css/premier.css">
+    <style>
+        .profile-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .profile-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-card h3 {
+            color: var(--color-primario);
+            border-bottom: 2px solid #00c896;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--color-primario);
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #00c896;
+        }
+        
+        .form-group input:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+        
+        .btn-save {
+            width: 100%;
+            padding: 0.9rem;
+            background-color: #00c896;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-save:hover {
+            background-color: #009970;
+        }
+        
+        .btn-logout {
+            width: 100%;
+            padding: 0.9rem;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background-color: #d32f2f;
+        }
+        
+        .favoritos-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .favorito-item {
+            text-align: center;
+            cursor: pointer;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .favorito-item:hover {
+            border-color: #00c896;
+            background-color: #f5f5f5;
+        }
+        
+        .favorito-item.selected {
+            border-color: #00c896;
+            background-color: #e8f5f0;
+            font-weight: bold;
+        }
+        
+        .favorito-item img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 0.5rem;
+            object-fit: contain;
+        }
+        
+        .favorito-item p {
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            margin: 0;
+        }
+        
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            display: none;
+        }
+        
+        .alert.show {
+            display: block;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .section-title {
+            color: var(--color-primario);
+            margin: 1.5rem 0 1rem 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header class="encabezado-sitio">
+        <div class="contenedor-principal contenido-header">
+            <div class="barra">
+                <a href="paginaprincipal.html">
+                    <img src="../img/Logos/icono3.png" alt="Logotipo Premier League" class="logo-invertido">
+                </a>
+                <nav class="navegacion-principal">
+                    <a href="paginaprincipal.html">Inicio</a>
+                    <a href="jornadas.html">Jornadas</a>
+                    <a href="tabla.html">Tabla de Posiciones</a>
+                    <a href="estadisticas.html">Estadisticas</a>
+                    <a href="resultados.html">Resultados</a>
+                    <a id="auth-link" href="login.html" style="color: #00c896; font-weight: bold;">Mi Perfil</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="seccion-principal">
+        <section class="contenedor seccion">
+            <h2 class="titulo-seccion">Mi Perfil</h2>
+            
+            <div id="alert-message" class="alert"></div>
+            
+            <div class="profile-container">
+                <!-- Tarjeta de Información Personal -->
+                <div class="profile-card">
+                    <h3>Información Personal</h3>
+                    
+                    <div class="form-group">
+                        <label for="usuario">Usuario:</label>
+                        <input type="text" id="usuario" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="rol">Rol:</label>
+                        <input type="text" id="rol" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fecha-registro">Miembro desde:</label>
+                        <input type="text" id="fecha-registro" disabled>
+                    </div>
+                    
+                    <button class="btn-save" onclick="actualizarPerfil()">Guardar Cambios</button>
+                    <button class="btn-logout" onclick="cerrarSesion()">Cerrar Sesión</button>
+                </div>
+                
+                <!-- Tarjeta de Favoritos -->
+                <div class="profile-card">
+                    <h3>Mis Favoritos</h3>
+                    
+                    <div class="section-title">Equipo Favorito</div>
+                    <div id="equipos-container" class="favoritos-list">
+                        <p style="grid-column: 1 / -1; text-align: center; color: #999;">Cargando equipos...</p>
+                    </div>
+                    
+                    <div class="section-title">Jugador Favorito</div>
+                    <div class="form-group">
+                        <label for="jugador-favorito">Selecciona tu jugador:</label>
+                        <select id="jugador-favorito">
+                            <option value="">-- Cargando jugadores --</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn-save" onclick="guardarFavoritos()">Guardar Favoritos</button>
+                </div>
+            </div>
+            
+            <!-- Sección de Comentarios -->
+            <div class="profile-card" style="grid-column: 1 / -1; margin-top: 2rem;">
+                <h3>Dejar un Comentario</h3>
+                
+                <div class="form-group">
+                    <label for="comentario-texto">Tu comentario:</label>
+                    <textarea id="comentario-texto" style="width: 100%; padding: 0.8rem; border: 2px solid #ddd; border-radius: 0.5rem; font-size: 1rem; min-height: 150px; font-family: Arial, sans-serif;" placeholder="Escribe tu comentario aquí..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="comentario-tipo">Tipo de comentario:</label>
+                    <select id="comentario-tipo">
+                        <option value="">-- Selecciona un tipo --</option>
+                        <option value="EQUIPO">Equipo</option>
+                        <option value="JUGADOR">Jugador</option>
+                        <option value="GENERAL">General</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="equipo-comentario-group" style="display: none;">
+                    <label for="equipo-comentario">Selecciona un equipo:</label>
+                    <select id="equipo-comentario">
+                        <option value="">-- Selecciona un equipo --</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="jugador-comentario-group" style="display: none;">
+                    <label for="jugador-comentario">Selecciona un jugador:</label>
+                    <select id="jugador-comentario">
+                        <option value="">-- Selecciona un jugador --</option>
+                    </select>
+                </div>
+                
+                <button class="btn-save" onclick="enviarComentario()">Enviar Comentario</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="pie-de-pagina">
+        <p class="copyright">Premier League 2025 &copy;</p>
+    </footer>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="../js/scripts.js"></script>
+    <script>
+        let equipoSeleccionado = null;
+        let jugadorSeleccionado = null;
+        
+        $(document).ready(function() {
+            // Verificar que esté autenticado
+            const token = getJwtToken();
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Cargar datos del usuario
+            cargarDatosUsuario();
+            cargarEquipos();
+            cargarJugadores();
+            
+            // Manejar cambio en tipo de comentario
+            $('#comentario-tipo').change(function() {
+                const tipo = $(this).val();
+                $('#equipo-comentario-group').hide();
+                $('#jugador-comentario-group').hide();
+                
+                if (tipo === 'EQUIPO') {
+                    $('#equipo-comentario-group').show();
+                    // Llenar dropdown de equipos si no está lleno
+                    if ($('#equipo-comentario option').length === 1) {
+                        cargarEquiposComentario();
+                    }
+                } else if (tipo === 'JUGADOR') {
+                    $('#jugador-comentario-group').show();
+                    // Llenar dropdown de jugadores si no está lleno
+                    if ($('#jugador-comentario option').length === 1) {
+                        cargarJugadoresComentario();
+                    }
+                }
+            });
+        });
+        
+        function cargarDatosUsuario() {
+            const token = getJwtToken();
+            const usuarioJSON = localStorage.getItem('usuario');
+            
+            if (usuarioJSON) {
+                const usuario = JSON.parse(usuarioJSON);
+                $('#usuario').val(usuario.nombreUsuario || '');
+                $('#email').val(usuario.email || '');
+                $('#rol').val(usuario.rol && usuario.rol.nombre ? usuario.rol.nombre : 'Usuario');
+                
+                if (usuario.fechaRegistro) {
+                    const fecha = new Date(usuario.fechaRegistro).toLocaleDateString('es-ES');
+                    $('#fecha-registro').val(fecha);
+                }
+                
+                // Cargar favorito actual del equipo
+                $.ajax({
+                    url: `${BASE_API_URL}/favoritos/equipos/usuario/${usuario.idUsuario || usuario.id}`,
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    success: function(response) {
+                        console.log('Equipo favorito:', response);
+                        if (response.data && response.data.length > 0) {
+                            equipoSeleccionado = response.data[0].idEquipoApi;
+                            setTimeout(() => marcarEquipoSeleccionado(), 500);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error al cargar equipo favorito:', xhr);
+                    }
+                });
+                
+                // Cargar favorito actual del jugador
+                $.ajax({
+                    url: `${BASE_API_URL}/favoritos/jugadores/usuario/${usuario.idUsuario || usuario.id}`,
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    success: function(response) {
+                        console.log('Jugador favorito:', response);
+                        if (response.data && response.data.length > 0) {
+                            jugadorSeleccionado = response.data[0].idJugadorApi;
+                            $('#jugador-favorito').val(jugadorSeleccionado);
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error al cargar jugador favorito:', xhr);
+                    }
+                });
+            }
+        }
+        
+        function cargarEquipos() {
+            const token = getJwtToken();
+            
+            // Cargar equipos desde el backend
+            $.ajax({
+                url: `${BASE_API_URL}/equipos`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    console.log('Equipos cargados:', response);
+                    let equiposHTML = '';
+                    
+                    // Manejar si es array directo o si está envuelto en data
+                    let equipos = Array.isArray(response) ? response : (response.data || []);
+                    
+                    if (equipos && equipos.length > 0) {
+                        equipos.forEach(equipo => {
+                            const crest = equipo.crest || equipo.escudo || '../img/Logos/logo-premier.svg';
+                            equiposHTML += `
+                                <div class="favorito-item" data-equipo-id="${equipo.id}" onclick="seleccionarEquipo('${equipo.id}', this)">
+                                    <img src="${crest}" alt="${equipo.name}" onerror="this.src='../img/Logos/logo-premier.svg'">
+                                    <p>${equipo.name || equipo.nombre}</p>
+                                </div>
+                            `;
+                        });
+                    }
+                    
+                    if (equiposHTML === '') {
+                        equiposHTML = '<p style="grid-column: 1 / -1; text-align: center; color: #999;">No hay equipos disponibles</p>';
+                    }
+                    
+                    $('#equipos-container').html(equiposHTML);
+                    marcarEquipoSeleccionado();
+                },
+                error: function(xhr) {
+                    console.error('Error al cargar equipos:', xhr);
+                    $('#equipos-container').html('<p style="grid-column: 1 / -1; text-align: center; color: red;">Error al cargar equipos</p>');
+                }
+            });
+        }
+        
+        function cargarJugadores() {
+            const token = getJwtToken();
+            
+            // Cargar jugadores desde la API
+            $.ajax({
+                url: `${BASE_API_URL}/jugadores`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    console.log('Jugadores cargados:', response);
+                    let jugadoresHTML = '<option value="">-- Selecciona un jugador --</option>';
+                    
+                    if (Array.isArray(response) && response.length > 0) {
+                        response.forEach(jugador => {
+                            const idJugadorApi = jugador.idJugadorApi || jugador.id;
+                            const nombre = jugador.nombre || jugador.name || 'Desconocido';
+                            jugadoresHTML += `<option value="${idJugadorApi}">${nombre}</option>`;
+                        });
+                    }
+                    
+                    $('#jugador-favorito').html(jugadoresHTML);
+                    if (jugadorSeleccionado) {
+                        $('#jugador-favorito').val(jugadorSeleccionado);
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error al cargar jugadores:', xhr);
+                    $('#jugador-favorito').html('<option value="">-- Error al cargar --</option>');
+                }
+            });
+        }
+        
+        function seleccionarEquipo(equipoId, element) {
+            equipoSeleccionado = equipoId;
+            
+            // Remover selección anterior
+            $('.favorito-item').removeClass('selected');
+            
+            // Marcar como seleccionado
+            $(element).addClass('selected');
+        }
+        
+        function marcarEquipoSeleccionado() {
+            if (equipoSeleccionado) {
+                $('.favorito-item').each(function() {
+                    const equipo = $(this).data('equipo-id');
+                    if (equipo === equipoSeleccionado) {
+                        $(this).addClass('selected');
+                    }
+                });
+            }
+        }
+        
+        function actualizarPerfil() {
+            const token = getJwtToken();
+            const usuarioJSON = localStorage.getItem('usuario');
+            
+            if (!usuarioJSON) {
+                showAlert('No se pudo obtener información del usuario', 'error');
+                return;
+            }
+            
+            const usuario = JSON.parse(usuarioJSON);
+            const usuarioId = usuario.idUsuario || usuario.id;
+            const email = $('#email').val();
+            
+            if (!email) {
+                showAlert('El email es requerido', 'error');
+                return;
+            }
+            
+            $.ajax({
+                url: `${BASE_API_URL}/usuarios/${usuarioId}`,
+                method: 'PUT',
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                data: JSON.stringify({
+                    email: email
+                }),
+                success: function(response) {
+                    console.log('Perfil actualizado:', response);
+                    showAlert('Perfil actualizado exitosamente', 'success');
+                    
+                    // Actualizar localStorage
+                    if (response.data) {
+                        localStorage.setItem('usuario', JSON.stringify(response.data));
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error al actualizar perfil:', xhr);
+                    const errorMsg = xhr.responseJSON && xhr.responseJSON.message 
+                        ? xhr.responseJSON.message 
+                        : 'Error al actualizar el perfil';
+                    showAlert(errorMsg, 'error');
+                }
+            });
+        }
+        
+        function guardarFavoritos() {
+            const token = getJwtToken();
+            const usuarioJSON = localStorage.getItem('usuario');
+            
+            if (!usuarioJSON) {
+                showAlert('No se pudo obtener información del usuario', 'error');
+                return;
+            }
+            
+            const usuario = JSON.parse(usuarioJSON);
+            const usuarioId = usuario.idUsuario || usuario.id;
+            
+            if (!equipoSeleccionado && !jugadorSeleccionado) {
+                showAlert('Selecciona al menos un favorito', 'error');
+                return;
+            }
+            
+            if (equipoSeleccionado) {
+                $.ajax({
+                    url: `${BASE_API_URL}/favoritos/equipos`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    data: JSON.stringify({
+                        idUsuario: usuarioId,
+                        idEquipoApi: equipoSeleccionado
+                    }),
+                    success: function(response) {
+                        console.log('Equipo favorito guardado:', response);
+                        showAlert('Equipo favorito guardado', 'success');
+                    },
+                    error: function(xhr) {
+                        console.error('Error al guardar equipo favorito:', xhr);
+                        showAlert('Error al guardar equipo favorito', 'error');
+                    }
+                });
+            }
+            
+            if (jugadorSeleccionado) {
+                $.ajax({
+                    url: `${BASE_API_URL}/favoritos/jugadores`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    data: JSON.stringify({
+                        idUsuario: usuarioId,
+                        idJugadorApi: jugadorSeleccionado
+                    }),
+                    success: function(response) {
+                        console.log('Jugador favorito guardado:', response);
+                        showAlert('Jugador favorito guardado', 'success');
+                    },
+                    error: function(xhr) {
+                        console.error('Error al guardar jugador favorito:', xhr);
+                        showAlert('Error al guardar jugador favorito', 'error');
+                    }
+                });
+            }
+        }
+        
+        function cerrarSesion() {
+            handleLogout();
+        }
+        
+        function cargarEquiposComentario() {
+            const token = getJwtToken();
+            
+            $.ajax({
+                url: `${BASE_API_URL}/equipos`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    let equiposHTML = '<option value="">-- Selecciona un equipo --</option>';
+                    
+                    if (Array.isArray(response) && response.length > 0) {
+                        response.forEach(equipo => {
+                            equiposHTML += `<option value="${equipo.id}">${equipo.name || equipo.nombre}</option>`;
+                        });
+                    }
+                    
+                    $('#equipo-comentario').html(equiposHTML);
+                },
+                error: function(xhr) {
+                    console.error('Error al cargar equipos para comentarios:', xhr);
+                }
+            });
+        }
+        
+        function cargarJugadoresComentario() {
+            const token = getJwtToken();
+            
+            $.ajax({
+                url: `${BASE_API_URL}/jugadores`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                success: function(response) {
+                    let jugadoresHTML = '<option value="">-- Selecciona un jugador --</option>';
+                    
+                    if (Array.isArray(response) && response.length > 0) {
+                        response.forEach(jugador => {
+                            const idJugadorApi = jugador.idJugadorApi || jugador.id;
+                            const nombre = jugador.nombre || jugador.name || 'Desconocido';
+                            jugadoresHTML += `<option value="${idJugadorApi}">${nombre}</option>`;
+                        });
+                    }
+                    
+                    $('#jugador-comentario').html(jugadoresHTML);
+                },
+                error: function(xhr) {
+                    console.error('Error al cargar jugadores para comentarios:', xhr);
+                }
+            });
+        }
+        
+        function showAlert(message, type) {
+            const $alert = $('#alert-message');
+            $alert.removeClass('show alert-success alert-error');
+            $alert.addClass(`show alert-${type}`);
+            $alert.text(message);
+            
+            if (type === 'error') {
+                setTimeout(() => {
+                    $alert.removeClass('show');
+                }, 5000);
+            }
+        }
+        
+        function enviarComentario() {
+            const token = getJwtToken();
+            const usuarioJSON = localStorage.getItem('usuario');
+            
+            if (!usuarioJSON) {
+                showAlert('No se pudo obtener información del usuario', 'error');
+                return;
+            }
+            
+            const usuario = JSON.parse(usuarioJSON);
+            const usuarioId = usuario.idUsuario || usuario.id;
+            const contenido = $('#comentario-texto').val().trim();
+            const tipo = $('#comentario-tipo').val();
+            
+            if (!contenido) {
+                showAlert('El comentario no puede estar vacío', 'error');
+                return;
+            }
+            
+            if (!tipo) {
+                showAlert('Selecciona un tipo de comentario', 'error');
+                return;
+            }
+            
+            let idEntidad = '';
+            
+            if (tipo === 'EQUIPO') {
+                idEntidad = $('#equipo-comentario').val();
+                if (!idEntidad) {
+                    showAlert('Selecciona un equipo', 'error');
+                    return;
+                }
+            } else if (tipo === 'JUGADOR') {
+                idEntidad = $('#jugador-comentario').val();
+                if (!idEntidad) {
+                    showAlert('Selecciona un jugador', 'error');
+                    return;
+                }
+            } else if (tipo === 'GENERAL') {
+                idEntidad = '0'; // ID genérico para comentarios generales
+            }
+            
+            $.ajax({
+                url: `${BASE_API_URL}/comentarios`,
+                method: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                data: JSON.stringify({
+                    idUsuario: usuarioId,
+                    contenido: contenido,
+                    entidadId: idEntidad,
+                    entidadTipo: tipo
+                }),
+                success: function(response) {
+                    console.log('Comentario enviado:', response);
+                    showAlert('¡Comentario enviado correctamente!', 'success');
+                    
+                    // Limpiar formulario
+                    $('#comentario-texto').val('');
+                    $('#comentario-tipo').val('');
+                    $('#equipo-comentario').val('');
+                    $('#jugador-comentario').val('');
+                    $('#equipo-comentario-group').hide();
+                    $('#jugador-comentario-group').hide();
+                    
+                    setTimeout(() => {
+                        $('#alert-message').removeClass('show');
+                    }, 3000);
+                },
+                error: function(xhr) {
+                    console.error('Error al enviar comentario:', xhr);
+                    const errorMsg = xhr.responseJSON && xhr.responseJSON.message 
+                        ? xhr.responseJSON.message 
+                        : 'Error al enviar el comentario';
+                    showAlert(errorMsg, 'error');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

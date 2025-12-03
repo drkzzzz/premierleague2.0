@@ -31,7 +31,7 @@ public class Comentario {
     @Column(nullable = false, length = 50)
     private String entidadId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private TipoEntidad entidadTipo;
 
@@ -43,7 +43,7 @@ public class Comentario {
     }
 
     public enum TipoEntidad {
-        PARTIDO, NOTICIA, EQUIPO
+        PARTIDO, NOTICIA, EQUIPO, JUGADOR, GENERAL
     }
 
     public Long getIdComentario() {
